@@ -12,8 +12,8 @@ node --experimental-modules index.mjs # Or `nodemon` for continuous file change 
 
 ## Studying
 
-See [doc/notes.md].
+See [notes](doc/notes.md).
 
 ## Contributing
 
-See [doc/tasks.md].
+See [tasks](doc/tasks.md).
