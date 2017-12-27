@@ -1,5 +1,7 @@
 # Bazos Puppeteer Scraper
 
+Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON.
+
 ## Running
 
 ```sh
