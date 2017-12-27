@@ -1,0 +1,10 @@
+{
+  "name": "bazos-puppeteer-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/TomasHubelbauer/bazos-puppeteer-scraper.git",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^0.13.0"
+  }
+}
