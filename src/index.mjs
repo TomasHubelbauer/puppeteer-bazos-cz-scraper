@@ -30,6 +30,8 @@ async function scrape(query, zip, priceMin, priceMax) {
 
     await page.waitForNavigation();
 
+    // TODO: Show total results based on the post list header.
+
     const results = [];
     let hasNextPage = false;
 
@@ -62,10 +64,10 @@ async function scrape(query, zip, priceMin, priceMax) {
       if (pageResults.nextPageHref) {
         await page.goto(pageResults.nextPageHref);
         hasNextPage = true;
-        console.log(`Retrieved ${pageResults.length} page results. Retrieved ${results.length} total results so far. Advancing to next page.`);
+        console.log(`Retrieved ${pageResults.results.length} page results. Retrieved ${results.length} total results so far. Advancing to next page.`);
       } else {
         hasNextPage = false;
-        console.log(`Retrieved ${pageResults.length} page results. Retrieved ${results.length} total results. No more pages, closing.`);
+        console.log(`Retrieved ${pageResults.results.length} page results. Retrieved ${results.length} total results. No more pages, closing.`);
       }
     } while (hasNextPage);
 
