@@ -71,6 +71,8 @@ async function scrape(query, zip, priceMin, priceMax) {
       }
     } while (hasNextPage);
 
+    // TODO: Report discrepancy between advertised total from above and real total collected to spot scraping deficiencies.
+
     fs.writeFileSync('../results.json', JSON.stringify(results, null, 2));
   } catch (e) {
     console.log(e);
