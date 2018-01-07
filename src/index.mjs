@@ -5,6 +5,8 @@ import fs from 'fs';
 
 fs.readFileAsync = util.promisify(fs.readFile);
 
+const headless = false;
+
 commander
   .version('1.0.0') // Use `JSON.parse(await fs.readFileAsync('package.json')).version`
   .command('search [query] [zip]')
@@ -17,7 +19,7 @@ commander.parse(process.argv);
 
 async function scrape(query, zip, { from: priceMin, to: priceMax }) {
   console.log(`Searching for '${query}' within area ${zip} between ${priceMin} and ${priceMax} CZK.`);
-  const browser = await puppeteer.launch({ headless: true, slowMo: 10 });
+  const browser = await puppeteer.launch({ headless, slowMo: 10 });
   const page = (await browser.pages())[0];
   await page.bringToFront();
   await page.goto('https://bazos.cz');
@@ -26,10 +28,20 @@ async function scrape(query, zip, { from: priceMin, to: priceMax }) {
     const hledatInput = await page.$('#hledat');
     await hledatInput.focus();
     await page.keyboard.type(query);
+    // Discard the autocomplete prompt.
+    if (!headless) {
+      await page.waitForSelector('#vysledek');
+      await page.evaluate(() => document.getElementById('vysledek').remove());
+    }
 
     const hlokalitaInput = await page.$('#hlokalita');
     await hlokalitaInput.focus();
     await page.keyboard.type(zip);
+    // Discard the autocomplete prompt.
+    if (!headless) {
+      await page.waitForSelector('#vysledekpsc');
+      await page.evaluate(() => document.getElementById('vysledekpsc').remove());
+    }
 
     if (priceMin) {
       const cenaodInput = await page.$('input[name=cenaod]');
