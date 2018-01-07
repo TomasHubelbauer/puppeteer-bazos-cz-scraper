@@ -13,8 +13,8 @@ node --experimental-modules index.mjs "query" zip priceMin priceMax # Or `nodemo
 
 ## Studying
 
-See [notes](doc/notes.md).
+See [development log](doc/notes.md).
 
 ## Contributing
 
-See [tasks](doc/tasks.md).
+See [suggested contributions](doc/tasks.md).
