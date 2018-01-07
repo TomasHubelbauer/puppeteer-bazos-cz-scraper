@@ -5,6 +5,7 @@
   "repository": "https://github.com/TomasHubelbauer/bazos-puppeteer-scraper.git",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.12.2",
     "puppeteer": "^0.13.0"
   }
 }
