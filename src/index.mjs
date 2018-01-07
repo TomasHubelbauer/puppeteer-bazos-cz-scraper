@@ -5,7 +5,7 @@ import fs from 'fs';
 
 fs.readFileAsync = util.promisify(fs.readFile);
 
-const headless = false;
+const headless = true;
 
 commander
   .version('1.0.0') // Use `JSON.parse(await fs.readFileAsync('package.json')).version`
@@ -60,17 +60,27 @@ async function scrape(query, zip, { from: priceMin, to: priceMax }) {
 
     await page.waitForNavigation();
 
-    // TODO: Show total results based on the post list header.
-
+    let total;
+    let counter = 0;
     const results = [];
     let hasNextPage = false;
 
     do {
-      const pageResults = await page.evaluate(() => {
+      const summaryText = await page.$eval('table.listainzerat > tbody > tr > td', listaTd => listaTd.textContent);
+      const summaryTextParts = summaryText.trim().split(/[\s-]/g);
+      const firstPostNo = Number(summaryTextParts[1]);
+      const lastPostNo = Number(summaryTextParts[2]);
+      total = Number(summaryTextParts[5]);
+
+      console.log(`Search reports ${total} results total, posts ${firstPostNo}-${lastPostNo} on this page.`);
+
+      const pageResults = await page.evaluate((counter, firstPostNo, lastPostNo) => {
         let results = [];
 
         const vypisSpans = document.querySelectorAll('span.vypis');
-        for (const vypisSpan of vypisSpans) {
+        for (let index = 0; index < vypisSpans.length; index++) {
+          const vypisSpan = vypisSpans[index];
+
           const nadpisA = vypisSpan.querySelector('span.nadpis > a');
           const velikostSpan = vypisSpan.querySelector('span.velikost10');
           const popisDiv = vypisSpan.querySelector('div.popis');
@@ -83,13 +93,22 @@ async function scrape(query, zip, { from: priceMin, to: priceMax }) {
           const price = cenaSpan.textContent.slice(2, -3).replace(/ /, '');
 
           results.push({ title, url, date, description, price });
+
+          if (index === 0 && (counter + index) !== firstPostNo) {
+            console.log(`Post did not have expected number! Expected first post to be ${firstPostNo} but it was ${counter}.`);
+          }
+
+          if (index === vypisSpans.length - 1 && (counter + index) !== lastPostNo) {
+            console.log(`Post did not have expected number! Expected last post to be ${lastPostNo} but it was ${counter}.`);
+          }
         }
 
         const strankovaniA = document.querySelector('p.strankovani > a:last-child');
         return { results, nextPageHref: strankovaniA && strankovaniA.href };
-      });
+      }, firstPostNo, lastPostNo, counter);
 
       results.push(...pageResults.results);
+      counter += pageResults.results.length;
 
       if (pageResults.nextPageHref) {
         await page.goto(pageResults.nextPageHref);
@@ -101,7 +120,9 @@ async function scrape(query, zip, { from: priceMin, to: priceMax }) {
       }
     } while (hasNextPage);
 
-    // TODO: Report discrepancy between advertised total from above and real total collected to spot scraping deficiencies.
+    if (counter !== total) {
+      console.log(`Posts did not have expected total! Expected total to be ${total} but it was ${counter}.`);
+    }
 
     fs.writeFileSync('../results.json', JSON.stringify(results, null, 2));
   } catch (e) {
