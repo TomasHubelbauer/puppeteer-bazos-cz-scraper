@@ -1,7 +1,21 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer'; // https://github.com/GoogleChrome/puppeteer
+import commander from 'commander'; // https://github.com/tj/commander.js/
+import util from 'util';
 import fs from 'fs';
 
-async function scrape(query, zip, priceMin, priceMax) {
+fs.readFileAsync = util.promisify(fs.readFile);
+
+commander
+  .version('1.0.0') // Use `JSON.parse(await fs.readFileAsync('package.json')).version`
+  .command('search [query] [zip]')
+  .description('Searches Bazos.cz for the given query within the given ZIP.')
+  .option('-f, --from [amount]', 'Price from')
+  .option('-t, --to [amount]', 'Price to')
+  .action(scrape);
+
+commander.parse(process.argv);
+
+async function scrape(query, zip, { from: priceMin, to: priceMax }) {
   console.log(`Searching for '${query}' within area ${zip} between ${priceMin} and ${priceMax} CZK.`);
   const browser = await puppeteer.launch({ headless: true, slowMo: 10 });
   const page = (await browser.pages())[0];
@@ -17,13 +31,17 @@ async function scrape(query, zip, priceMin, priceMax) {
     await hlokalitaInput.focus();
     await page.keyboard.type(zip);
 
-    const cenaodInput = await page.$('input[name=cenaod]');
-    await cenaodInput.focus();
-    await page.keyboard.type(priceMin);
+    if (priceMin) {
+      const cenaodInput = await page.$('input[name=cenaod]');
+      await cenaodInput.focus();
+      await page.keyboard.type(priceMin);
+    }
 
-    const cenadoInput = await page.$('input[name=cenado]');
-    await cenadoInput.focus();
-    await page.keyboard.type(priceMax);
+    if (priceMax) {
+      const cenadoInput = await page.$('input[name=cenado]');
+      await cenadoInput.focus();
+      await page.keyboard.type(priceMax);
+    }
 
     const submitInput = await page.$('input[name=Submit]');
     await submitInput.click();
@@ -80,5 +98,3 @@ async function scrape(query, zip, priceMin, priceMax) {
 
   await browser.close();
 }
-
-scrape(process.argv[2], process.argv[3], process.argv[4], process.argv[5]);

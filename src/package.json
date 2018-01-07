@@ -4,6 +4,9 @@
   "main": "index.js",
   "repository": "https://github.com/TomasHubelbauer/bazos-puppeteer-scraper.git",
   "license": "MIT",
+  "scripts": {
+    "start": "node --experimental-modules index.mjs search"
+  },
   "dependencies": {
     "commander": "^2.12.2",
     "puppeteer": "^0.13.0"
