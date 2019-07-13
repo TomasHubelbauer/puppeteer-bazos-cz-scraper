@@ -1,0 +1,17 @@
+{
+  "name": "bazos-puppeteer-scraper",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "repository": "https://github.com/TomasHubelbauer/bazos-puppeteer-scraper.git",
+  "license": "MIT",
+  "scripts": {
+    "start": "node --experimental-modules index.mjs",
+    "demo": "npm start -- search -f 3000 -t 6000 -w iphone 11000"
+  },
+  "dependencies": {
+    "commander": "^2.20.0",
+    "filenamify": "^4.1.0",
+    "fs-extra": "^8.1.0",
+    "puppeteer": "^1.18.1"
+  }
+}
