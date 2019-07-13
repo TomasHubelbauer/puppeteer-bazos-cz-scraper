@@ -11,10 +11,14 @@ yarn
 node --experimental-modules index.mjs "query" zip priceMin priceMax # Or `nodemon` for continuous file change watching.
 ```
 
-## Studying
+## To-Do
 
-See [development log](doc/notes.md).
+Also see `TODO` comments in the code.
 
-## Contributing
+Open detail for each post and fetch full description from it.
 
-See [suggested contributions](doc/tasks.md).
+Persist captured errors to a log file.
+
+Implement diff to report updates/inserts in a separate file.
+
+Add a guide on how to hook up with cron for email reporting.
