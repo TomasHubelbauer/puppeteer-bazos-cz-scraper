@@ -1,1 +1,7 @@
 node_modules
+
+# Puppeteer trace with embedded screenshots
+trace.json
+
+# Results
+*-in-*-from-*-czk-to-*-czk.json
