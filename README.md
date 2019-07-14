@@ -34,3 +34,17 @@ Consider going directly to the search URL instead of filling in the form.
 The search URL structure is likely to be more stable than the form DOM as
 Bazos might consider people who bookmark search results, but has no reason
 to care about the form DOM being stable for 3rd parties.
+
+Implement session recording using tracing by stitching together the snapshots
+and creating a GIF out of them which is then saved to `demo.gif`.
+If this is too slow (the trace takes a while to save), taking screenshots myself
+should fix it albeit at the cost of more fluff code.
+
+The related Puppeteer GitHub issue also discusses using CDP directly to start a
+screencast:
+https://github.com/GoogleChrome/puppeteer/issues/478
+
+Or maybe use `getDisplayMedia` and send that over a WebRTC stream and listen to
+it in Node? But that would get me a video stream and conversion to GIF would be
+more work than stiching a GIF together from screenshots probably. Do not want to
+introduce a dependency on FFMPEG.
