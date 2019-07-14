@@ -11,16 +11,22 @@ commander
   .option('-f, --from [amount]', 'price from amount (CZK)')
   .option('-t, --to [amount]', 'price to amount (CZK)')
   .option('-w, --window', 'to run in non-headless mode (windowed)')
+  .option('-r, --record', 'record trace / screenshots')
   .action(scrape)
   ;
 
 commander.parse(process.argv);
 
-async function scrape(query, zip, { from: priceMin, to: priceMax, window }) {
+async function scrape(query, zip, { from: priceMin, to: priceMax, window, record }) {
   console.log(`Searching for '${query}' in Czech Republic ZIP code area ${zip} priced between ${priceMin} and ${priceMax} CZK.`);
   const browser = await puppeteer.launch({ headless: !window, slowMo: 10 });
   const page = (await browser.pages())[0];
   await page.bringToFront();
+
+  if (record) {
+    await page.tracing.start({ path: 'trace.json', screenshots: true });
+  }
+
   await page.goto('https://bazos.cz');
 
   try {
@@ -59,6 +65,13 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window }) {
     const submitInput = await page.$('input[name=Submit]');
     await submitInput.click();
 
+    // https://github.com/GoogleChrome/puppeteer/issues/4702
+    // await page.setRequestInterception(true);
+    // page.on('request', request => {
+    //   console.log(request.url());
+    //   request.continue();
+    // });
+
     await page.waitForNavigation();
 
     const start = new Date();
@@ -67,6 +80,11 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window }) {
     const results = [];
     let hasNextPage = false;
     do {
+      // Remove the advertisement banner to prevent jump and make screenshots nice
+      // Note that this is done this way because request interception doesn't seem to work
+      // https://github.com/GoogleChrome/puppeteer/issues/4702
+      await page.addStyleTag({ content: '#adcontainer1 { display: none !important; }' });
+
       const summaryText = await page.$eval('table.listainzerat > tbody > tr > td', listaTd => listaTd.textContent);
       const summaryTextParts = summaryText.trim().split(/[\s-]/g);
       const firstPostNo = Number(summaryTextParts[1]);
@@ -125,6 +143,10 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window }) {
 
     await fs.writeJSON(filenamify(`${query}-in-${zip}-from-${priceMin || 'any'}-czk-to-${priceMax || 'any'}-czk.json`), { start, end, results }, { spaces: 2 });
   } finally {
+    if (record) {
+      await page.tracing.stop();
+    }
+
     await browser.close();
   }
 }

@@ -13,6 +13,9 @@ Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON
 - `npm start -- -h` for the program help
 - `npm start -- search -h` for the `search` command help
 
+You can add `--record` to have the script produce `trace.json` with embedded
+screenshots (search for `snapshot`).
+
 ## To-Do
 
 Also see `TODO` comments in the code.
@@ -26,3 +29,8 @@ push the generated report back to the repo and set up GitHub
 Pages for the repository to show it on a live URL.
 
 Consider having the pipeline send out an email with a diff.
+
+Consider going directly to the search URL instead of filling in the form.
+The search URL structure is likely to be more stable than the form DOM as
+Bazos might consider people who bookmark search results, but has no reason
+to care about the form DOM being stable for 3rd parties.
