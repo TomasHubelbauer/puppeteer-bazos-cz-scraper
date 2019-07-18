@@ -4,7 +4,7 @@ Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON
 
 ## Running
 
-- `npm run demo` for an iPhone in Prague 1 between 3000 and 6000 CZK demo query
+- `npm run demo` to run a demo query *iPhone in Prague 1 between 3000 and 6000 CZK*
 
 ![](screenshot.gif)
 
