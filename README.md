@@ -6,7 +6,7 @@ Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON
 
 - `npm run demo` for an iPhone in Prague 1 between 3000 and 6000 CZK demo query
 
-![](demo.gif)
+![](screenshot.gif)
 
 - `npm start -- search {query} {zip} -f {priceFrom} -t {priceTo}` for custom query (headless)
 - `npm start -- search {query} {zip} -f {priceFrom} -t {priceTo} -w` for custom query (non-headless)
@@ -14,7 +14,7 @@ Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON
 - `npm start -- search -h` for the `search` command help
 
 You can add `--record` to have the script produce `trace.json` with embedded
-screenshots (search for `snapshot`).
+screenshots and then generate an animation using `cd screenshot && npm start`.
 
 ## To-Do
 
@@ -35,10 +35,14 @@ The search URL structure is likely to be more stable than the form DOM as
 Bazos might consider people who bookmark search results, but has no reason
 to care about the form DOM being stable for 3rd parties.
 
-Implement session recording using tracing by stitching together the snapshots
-and creating a GIF out of them which is then saved to `demo.gif`.
-If this is too slow (the trace takes a while to save), taking screenshots myself
-should fix it albeit at the cost of more fluff code.
+Figure out if I can improve the resolution of the snapshots captured in the
+trace and get rid of the broken frames found there.
+
+Consider taking screenshots myself (as opposed to using trace) and stitching
+those together to a GIF instead.
+
+Stretch the page to the full window size (there is some viewport trick for this)
+so that the resulting animation doesn't suffer from white space.
 
 The related Puppeteer GitHub issue also discusses using CDP directly to start a
 screencast:
