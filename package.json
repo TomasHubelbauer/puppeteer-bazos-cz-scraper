@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node --experimental-modules index.mjs",
-    "demo": "npm start -- search -f 3000 -t 6000 -w iphone 11000"
+    "demo": "npm start -- search -f 3000 -t 6000 -w iphone 11000 -r",
+    "screenshot": "cd screenshot && npm start"
   },
   "dependencies": {
     "commander": "^2.20.0",

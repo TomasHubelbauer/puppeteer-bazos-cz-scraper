@@ -14,7 +14,7 @@ Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON
 - `npm start -- search -h` for the `search` command help
 
 You can add `--record` to have the script produce `trace.json` with embedded
-screenshots and then generate an animation using `cd screenshot && npm start`.
+screenshots and then generate an animation from them using `npm run screenshot`.
 
 ## To-Do
 
@@ -40,9 +40,6 @@ trace and get rid of the broken frames found there.
 
 Consider taking screenshots myself (as opposed to using trace) and stitching
 those together to a GIF instead.
-
-Stretch the page to the full window size (there is some viewport trick for this)
-so that the resulting animation doesn't suffer from white space.
 
 The related Puppeteer GitHub issue also discusses using CDP directly to start a
 screencast:

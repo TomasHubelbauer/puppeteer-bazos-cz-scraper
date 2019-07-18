@@ -19,7 +19,7 @@ commander.parse(process.argv);
 
 async function scrape(query, zip, { from: priceMin, to: priceMax, window, record }) {
   console.log(`Searching for '${query}' in Czech Republic ZIP code area ${zip} priced between ${priceMin} and ${priceMax} CZK.`);
-  const browser = await puppeteer.launch({ headless: !window, slowMo: 10 });
+  const browser = await puppeteer.launch({ headless: !window, slowMo: 10, defaultViewport: null /* Stretch to size */ });
   const page = (await browser.pages())[0];
   await page.bringToFront();
 
