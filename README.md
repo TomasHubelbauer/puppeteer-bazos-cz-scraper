@@ -1,4 +1,4 @@
-# Bazos Puppeteer Scraper
+# Puppeteer Bazos.cz Scraper
 
 Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON.
 
