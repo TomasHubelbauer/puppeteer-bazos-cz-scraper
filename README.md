@@ -34,18 +34,3 @@ Consider going directly to the search URL instead of filling in the form.
 The search URL structure is likely to be more stable than the form DOM as
 Bazos might consider people who bookmark search results, but has no reason
 to care about the form DOM being stable for 3rd parties.
-
-Figure out if I can improve the resolution of the snapshots captured in the
-trace and get rid of the broken frames found there.
-
-Consider taking screenshots myself (as opposed to using trace) and stitching
-those together to a GIF instead.
-
-The related Puppeteer GitHub issue also discusses using CDP directly to start a
-screencast:
-https://github.com/GoogleChrome/puppeteer/issues/478
-
-Or maybe use `getDisplayMedia` and send that over a WebRTC stream and listen to
-it in Node? But that would get me a video stream and conversion to GIF would be
-more work than stiching a GIF together from screenshots probably. Do not want to
-introduce a dependency on FFMPEG.
