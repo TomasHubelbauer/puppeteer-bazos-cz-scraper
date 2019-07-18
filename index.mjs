@@ -4,6 +4,10 @@ import filenamify from 'filenamify';
 import fs from 'fs-extra';
 import metadata from './package.json';
 
+// Screenshot
+import GIFEncoder from 'gifencoder';
+import inkjet from 'inkjet';
+
 commander
   .version(metadata.version)
   .command('search [query] [zip]')
@@ -24,7 +28,7 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window, record
   await page.bringToFront();
 
   if (record) {
-    await page.tracing.start({ path: 'trace.json', screenshots: true });
+    await page.tracing.start({ screenshots: true });
   }
 
   // Speed up browsing and clean up screenshots by blocking 3rd party networking
@@ -150,7 +154,35 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window, record
     await fs.writeJSON(filenamify(`${query}-in-${zip}-from-${priceMin || 'any'}-czk-to-${priceMax || 'any'}-czk.json`), { start, end, results }, { spaces: 2 });
   } finally {
     if (record) {
-      await page.tracing.stop();
+      console.log('Collecting and parsing the trace data.');
+      const trace = JSON.parse(String(await page.tracing.stop()));
+      const snapshotTraceEvents = trace.traceEvents.filter(traceEvent => traceEvent.args.snapshot);
+
+      let gifEncoder;
+      for (const traceEvent of snapshotTraceEvents) {
+        console.log('Encoding a snapshot to the screenshot animation.');
+        const { width, height, data } = await new Promise((resolve, reject) => inkjet.decode(Buffer.from(traceEvent.args.snapshot, 'base64'), (error, data) => {
+          if (error) {
+            reject(error);
+          }
+
+          resolve(data);
+        }));
+
+        if (!gifEncoder) {
+          gifEncoder = new GIFEncoder(width, height);
+          gifEncoder.createReadStream().pipe(fs.createWriteStream('screenshot.gif'));
+          gifEncoder.start();
+          gifEncoder.setRepeat(0); // Repeat
+          gifEncoder.setDelay(50);
+          gifEncoder.setQuality(10); // Best?
+        }
+
+        gifEncoder.addFrame(data);
+      }
+
+      console.log('Finishing up the screenshot animation.');
+      gifEncoder.finish();
     }
 
     await browser.close();

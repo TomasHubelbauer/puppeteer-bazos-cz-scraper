@@ -13,8 +13,7 @@ Bazos.cz scraper built using Puppeteer used for obtaining search results as JSON
 - `npm start -- -h` for the program help
 - `npm start -- search -h` for the `search` command help
 
-You can add `--record` to have the script produce `trace.json` with embedded
-screenshots and then generate an animation from them using `npm run screenshot`.
+You can add `--record` to have the script produce the `screenshot.gif` animation.
 
 ## To-Do
 
