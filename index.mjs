@@ -44,6 +44,12 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window, record
 
   await page.goto('https://bazos.cz');
 
+  // Dismiss the cookie banner to make the screenshot animation less jumpy
+  if (record) {
+    const cookieButton = await page.waitForSelector('.fucking-eu-cookies button');
+    await cookieButton.click();
+  }
+
   try {
     const hledatInput = await page.$('#hledat');
     await hledatInput.focus();
