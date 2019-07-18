@@ -27,6 +27,18 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window, record
     await page.tracing.start({ path: 'trace.json', screenshots: true });
   }
 
+  // Speed up browsing and clean up screenshots by blocking 3rd party networking
+  await page.setRequestInterception(true);
+  page.on('request', request => {
+    const url = new URL(request.url());
+    if (url.hostname !== 'bazos.cz' && url.hostname !== 'www.bazos.cz') {
+      console.log(url.hostname);
+      request.abort()
+    } else {
+      request.continue();
+    }
+  });
+
   await page.goto('https://bazos.cz');
 
   try {
@@ -65,13 +77,6 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window, record
     const submitInput = await page.$('input[name=Submit]');
     await submitInput.click();
 
-    // https://github.com/GoogleChrome/puppeteer/issues/4702
-    // await page.setRequestInterception(true);
-    // page.on('request', request => {
-    //   console.log(request.url());
-    //   request.continue();
-    // });
-
     await page.waitForNavigation();
 
     const start = new Date();
@@ -80,10 +85,12 @@ async function scrape(query, zip, { from: priceMin, to: priceMax, window, record
     const results = [];
     let hasNextPage = false;
     do {
+
+
       // Remove the advertisement banner to prevent jump and make screenshots nice
       // Note that this is done this way because request interception doesn't seem to work
       // https://github.com/GoogleChrome/puppeteer/issues/4702
-      await page.addStyleTag({ content: '#adcontainer1 { display: none !important; }' });
+      //await page.addStyleTag({ content: '#adcontainer1 { display: none !important; }' });
 
       const summaryText = await page.$eval('table.listainzerat > tbody > tr > td', listaTd => listaTd.textContent);
       const summaryTextParts = summaryText.trim().split(/[\s-]/g);
