@@ -33,3 +33,7 @@ Pages for the repository to show it on a live URL.
 The search URL structure is likely to be more stable than the form DOM as
 Bazos might consider people who bookmark search results, but has no reason
 to care about the form DOM being stable for 3rd parties.
+
+### Use my library node-puppeteer-apng for the screencast
+
+Find a way to capture the frames at a lower resolution to keep the size down.
